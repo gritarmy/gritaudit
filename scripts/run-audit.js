@@ -19,12 +19,15 @@ async function runLighthouse(url, formFactor) {
 });
 
   const flags = {
-    port: chrome.port,
-    output: "json",
-    logLevel: "error",
-    onlyCategories: ["performance", "accessibility", "best-practices", "seo"],
-    emulatedFormFactor: formFactor
-  };
+  port: chrome.port,
+  output: "json",
+  logLevel: "error",
+  onlyCategories: ["performance", "accessibility", "best-practices", "seo"],
+  emulatedFormFactor: formFactor,
+  settings: {
+    disableInsights: true
+  }
+};
 
   try {
     const result = await lighthouse(url, flags);
