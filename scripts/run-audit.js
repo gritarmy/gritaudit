@@ -15,22 +15,39 @@ function nowISO() {
 
 async function runLighthouse(url, formFactor) {
   const chrome = await launch({
-  chromeFlags: ["--headless", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"]
-});
+    chromeFlags: ["--headless", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"]
+  });
 
   const flags = {
-  port: chrome.port,
-  output: "json",
-  logLevel: "error",
-  onlyCategories: ["performance", "accessibility", "best-practices", "seo"],
-  emulatedFormFactor: formFactor,
-  settings: {
-    disableInsights: true
-  }
-};
+    port: chrome.port,
+    output: "json",
+    logLevel: "error",
+    onlyCategories: ["performance", "accessibility", "best-practices", "seo"],
+    emulatedFormFactor: formFactor,
+    settings: {
+      disableInsights: true
+    }
+  };
 
   try {
-    const result = await lighthouse(url, flags);
+    let result;
+    try {
+      result = await lighthouse(url, flags);
+    } catch (err) {
+      const msg = String(err?.message || err);
+      const retryable =
+        msg.includes("performance mark has not been set") ||
+        msg.includes("lh:runner:gather") ||
+        msg.includes("LanternError") ||
+        msg.includes("trace-engine");
+
+      if (!retryable) throw err;
+
+      // retry once
+      await new Promise(r => setTimeout(r, 2000));
+      result = await lighthouse(url, flags);
+    }
+
     const lhr = result.lhr;
 
     const scores = {
@@ -48,6 +65,15 @@ async function runLighthouse(url, formFactor) {
     };
 
     return { scores, metrics, report: lhr };
+  } catch (err) {
+    // Fallback so weekly job does NOT fail
+    console.error(`[Lighthouse failed] ${formFactor} ${url}`, err?.message || err);
+    return {
+      scores: { performance: 0, accessibility: 0, bestPractices: 0, seo: 0 },
+      metrics: { lcp_ms: null, cls: null, tbt_ms: null, speedIndex_ms: null },
+      report: null,
+      error: String(err?.message || err)
+    };
   } finally {
     await chrome.kill();
   }
