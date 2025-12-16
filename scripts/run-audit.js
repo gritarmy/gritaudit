@@ -15,7 +15,7 @@ function nowISO() {
 
 async function runLighthouse(url, formFactor) {
   const chrome = await chromeLauncher.launch({
-    chromeFlags: ["--headless", "--no-sandbox", "--disable-gpu"]
+    chromeFlags: ["--headless", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"]
   });
 
   const flags = {
