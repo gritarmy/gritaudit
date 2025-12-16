@@ -1,0 +1,15 @@
+{
+  "name": "gritaudit",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "audit": "node scripts/run-audit.js"
+  },
+  "dependencies": {
+    "lighthouse": "^12.0.0",
+    "chrome-launcher": "^1.1.2",
+    "node-fetch": "^3.3.2",
+    "jsdom": "^26.0.0"
+  }
+}
