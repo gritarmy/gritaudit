@@ -18,12 +18,22 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install Google Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-linux.gpg
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
       - name: Install deps
         run: npm install
 
       - name: Run audit
         env:
           GS_WEBHOOK_URL: ${{ secrets.GS_WEBHOOK_URL }}
+          CHROME_PATH: /usr/bin/google-chrome
         run: npm run audit
 
       - name: Upload report artifact
