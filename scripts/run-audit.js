@@ -3,7 +3,7 @@ import path from "node:path";
 import fetch from "node-fetch";
 import { JSDOM } from "jsdom";
 import lighthouse from "lighthouse";
-import chromeLauncher from "chrome-launcher";
+import { launch } from "chrome-launcher";
 import { PAGES, GOOGLE_SHEETS_WEBHOOK_URL } from "./config.js";
 
 const OUT_DIR = "out";
@@ -14,9 +14,9 @@ function nowISO() {
 }
 
 async function runLighthouse(url, formFactor) {
-  const chrome = await chromeLauncher.launch({
-    chromeFlags: ["--headless", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"]
-  });
+  const chrome = await launch({
+  chromeFlags: ["--headless", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"]
+});
 
   const flags = {
     port: chrome.port,
