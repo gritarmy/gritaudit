@@ -1,7 +1,9 @@
 export const PAGES = [
   "https://gritarmy.com/",
   "https://gritarmy.com/collections/socks",
-  "https://gritarmy.com/cart"
+  "https://gritarmy.com/cart",
+  "https://gritarmy.com/products/high-compression-socks-adult",
+  "https://gritarmy.com/products/premium-athletic-crew-socks"
 ];
 
 // Optional: if you add Google Sheets later
